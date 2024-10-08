@@ -7,4 +7,4 @@ pytesseract
 yolov5
 numpy
 huggingface_hub
-
+imutils
