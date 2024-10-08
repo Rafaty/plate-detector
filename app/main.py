@@ -139,15 +139,9 @@ def preprocess_character_image(char_image):
     if len(resized_char.shape) == 3:
         resized_char = cv2.cvtColor(resized_char, cv2.COLOR_BGR2GRAY)
 
-    # Apply binary thresholding to remove noise and clarify characters
-    _, binary_image = cv2.threshold(resized_char, 0, 255, cv2.THRESH_BINARY + cv2.THRESH_OTSU)
 
-    # Apply dilation to make characters thicker and more recognizable
-    kernel = np.ones((2, 2), np.uint8)
-    processed_image = cv2.dilate(binary_image, kernel, iterations=1)
 
-    return processed_image
-
+    return resized_char
 
 def segment_characters(plate_region):
     if plate_region is None or plate_region.size == 0:
@@ -202,9 +196,9 @@ def segment_characters(plate_region):
         # Ensure small characters like "I" are captured by adjusting the height threshold
         if h / plate_region.shape[0] > 0.35 and h < 0.95 * plate_region.shape[0]:
             char_image = thresh[y:y + h, x:x + w]
-            char_image_resized = cv2.resize(char_image, (20, 40))  # Resize characters for consistency
-            character_images.append(char_image_resized)
-            save_image(char_image_resized, f"char_segment_{idx}.png")  # Save segmented characters
+            char_image_preprocessed = preprocess_character_image(char_image)
+            character_images.append(char_image_preprocessed)
+            save_image(char_image_preprocessed, f"char_segment_preprocessed_{idx}.png")  # Save segmented characters
 
     if not character_images:
         logging.warning("Nenhum caractere segmentado da placa.")
