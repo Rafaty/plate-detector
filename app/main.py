@@ -52,7 +52,7 @@ def detect_plate(img):
 
     # Redimensionar a imagem para o tamanho esperado pelo modelo
     img_resized = cv2.resize(img, (640, 640))
-    save_image(img_resized, "resized_image.png")  # Salvar imagem redimensionada para debug
+    #save_image(img_resized, "resized_image.png")  # Salvar imagem redimensionada para debug
 
     # Executar o modelo diretamente na imagem
     results = model(img_resized, size=640)
@@ -64,7 +64,7 @@ def detect_plate(img):
     crops = results.crop(save=False)
     if len(crops) > 0:
         plate_region = crops[0]['im']  # Usar a primeira região recortada
-        save_image(plate_region, "plate_region_cropped.png")  # Salvar a região da placa recortada
+        #save_image(plate_region, "plate_region_cropped.png")  # Salvar a região da placa recortada
         return plate_region
 
     logging.warning("Nenhuma placa detectada na imagem.")
@@ -151,12 +151,12 @@ def segment_characters(plate_region):
     # Convert to grayscale and apply Otsu's thresholding
     gray_plate = cv2.cvtColor(plate_region, cv2.COLOR_BGR2GRAY)
     _, thresh = cv2.threshold(gray_plate, 0, 255, cv2.THRESH_BINARY_INV + cv2.THRESH_OTSU)
-    save_image(thresh, "thresh_plate.png")  # Save thresholded image for debugging
+    #save_image(thresh, "thresh_plate.png")  # Save thresholded image for debugging
 
     # Apply some morphological operations to improve segmentation
     kernel = cv2.getStructuringElement(cv2.MORPH_RECT, (2, 2))
     thresh = cv2.morphologyEx(thresh, cv2.MORPH_CLOSE, kernel)
-    save_image(thresh, "thresh_morph.png")
+    #save_image(thresh, "thresh_morph.png")
 
     # Perform connected components analysis to segment potential characters
     labels = measure.label(thresh, background=0)
@@ -198,7 +198,7 @@ def segment_characters(plate_region):
             char_image = thresh[y:y + h, x:x + w]
             char_image_preprocessed = preprocess_character_image(char_image)
             character_images.append(char_image_preprocessed)
-            save_image(char_image_preprocessed, f"char_segment_preprocessed_{idx}.png")  # Save segmented characters
+            #save_image(char_image_preprocessed, f"char_segment_preprocessed_{idx}.png")  # Save segmented characters
 
     if not character_images:
         logging.warning("Nenhum caractere segmentado da placa.")
@@ -261,7 +261,7 @@ def read_plate():
             logging.error("Imagem inválida fornecida.")
             return jsonify({'error': 'Invalid image provided'}), 400
 
-        save_image(img, "original_image.png")  # Salvar imagem original para debug
+        #save_image(img, "original_image.png")  # Salvar imagem original para debug
 
         # Detectar a placa
         plate_region = detect_plate(img)
