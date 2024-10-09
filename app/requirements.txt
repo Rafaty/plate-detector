@@ -8,3 +8,6 @@ yolov5
 numpy
 huggingface_hub
 imutils
+joblib
+scikit-learn
+flask_cors 
